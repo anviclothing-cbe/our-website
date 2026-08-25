@@ -9,12 +9,14 @@ const router = Router();
 // GET /api/products
 router.get("/", async (req: Request, res: Response) => {
   try {
-    const { category, search, onSale, featured, page = "1", limit = "12" } = req.query;
+    const { category, collection, occasion, search, onSale, featured, page = "1", limit = "12" } = req.query;
     const pageNum = parseInt(page as string, 10);
     const limitNum = parseInt(limit as string, 10);
 
     const filter: Record<string, unknown> = {};
     if (category) filter.category = category;
+    if (collection) filter.collections = { $in: [collection] };
+    if (occasion) filter.occasions = { $in: [occasion] };
     if (onSale === "true") filter.onSale = true;
     if (featured === "true") filter.featured = true;
     if (search) filter.name = { $regex: search, $options: "i" };

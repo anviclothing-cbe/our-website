@@ -112,3 +112,52 @@ export async function updateOrderStatus(id: string, status: string) {
   if (!res.ok) throw new Error("Failed");
   return res.json();
 }
+
+// LEADS
+export async function getLeads(page = 1, limit = 20) {
+  const res = await adminFetch(`/leads?page=${page}&limit=${limit}`);
+  if (!res.ok) throw new Error("Failed");
+  return res.json();
+}
+
+// CMS Content
+export async function getAdminContent(type: string) {
+  // Placeholder: Mock CMS content fetch
+  const res = await adminFetch(`/content/${type}`);
+  if (!res.ok) {
+    if (res.status === 404) return null;
+    throw new Error("Failed to fetch content");
+  }
+  return res.json();
+}
+
+export async function updateAdminContent(type: string, data: Record<string, unknown>) {
+  const res = await adminFetch(`/content/${type}`, { method: "PUT", body: JSON.stringify(data) });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error ?? "Failed to update content"); }
+  return res.json();
+}
+
+// Blog
+export async function getAdminBlogPosts() {
+  const res = await adminFetch("/blog");
+  if (!res.ok) throw new Error("Failed");
+  return res.json();
+}
+
+export async function createBlogPost(data: Record<string, unknown>) {
+  const res = await adminFetch("/blog", { method: "POST", body: JSON.stringify(data) });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error ?? "Failed"); }
+  return res.json();
+}
+
+export async function updateBlogPost(id: string, data: Record<string, unknown>) {
+  const res = await adminFetch(`/blog/${id}`, { method: "PUT", body: JSON.stringify(data) });
+  if (!res.ok) { const e = await res.json(); throw new Error(e.error ?? "Failed"); }
+  return res.json();
+}
+
+export async function deleteBlogPost(id: string) {
+  const res = await adminFetch(`/blog/${id}`, { method: "DELETE" });
+  if (!res.ok) throw new Error("Failed");
+  return res.json();
+}

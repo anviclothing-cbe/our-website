@@ -14,6 +14,7 @@ function cartToResponse(cart: InstanceType<typeof Cart>) {
     image: item.image,
     quantity: item.quantity,
     size: item.size,
+    color: item.color,
   }));
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
@@ -48,7 +49,7 @@ router.get("/", async (req: Request, res: Response) => {
 // POST /api/cart
 router.post("/", async (req: Request, res: Response) => {
   try {
-    const { sessionId, productId, quantity, size } = req.body;
+    const { sessionId, productId, quantity, size, color } = req.body;
     if (!sessionId || !productId || !quantity || !size) {
       res.status(400).json({ error: "sessionId, productId, quantity, and size are required" });
       return;
@@ -59,6 +60,11 @@ router.post("/", async (req: Request, res: Response) => {
       res.status(404).json({ error: "Product not found" });
       return;
     }
+    
+    if (!product.inStock) {
+      res.status(400).json({ error: "Product is currently out of stock" });
+      return;
+    }
 
     let cart = await Cart.findOne({ sessionId });
     if (!cart) {
@@ -66,7 +72,7 @@ router.post("/", async (req: Request, res: Response) => {
     }
 
     const existingItem = cart.items.find(
-      (item) => item.productId === productId && item.size === size,
+      (item) => item.productId === productId && item.size === size && item.color === color,
     );
 
     if (existingItem) {
@@ -80,6 +86,7 @@ router.post("/", async (req: Request, res: Response) => {
         image: product.images[0] || "",
         quantity,
         size,
+        color,
       });
     }
 

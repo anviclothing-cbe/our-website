@@ -1,2 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /account/
+Disallow: /cart
+Disallow: /checkout
+Disallow: /order-confirmation/
+Disallow: /search
+Disallow: /design-system
+
+Sitemap: https://anvi.clothing/sitemap.xml

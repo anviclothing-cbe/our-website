@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, { type Express } from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
 import path from "node:path";
 import fs from "node:fs";
@@ -29,6 +30,7 @@ app.use(
   }),
 );
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
@@ -39,6 +41,25 @@ if (!fs.existsSync(uploadsDir)) {
 app.use("/api/uploads", express.static(uploadsDir));
 
 app.use("/api", router);
+
+// Serve frontend static files
+let publicDir = path.resolve(process.cwd(), "../client/dist/public");
+if (!fs.existsSync(publicDir)) {
+  publicDir = path.resolve(process.cwd(), "client/dist/public");
+}
+
+if (fs.existsSync(publicDir)) {
+  logger.info({ publicDir }, "Serving static files");
+  app.use(express.static(publicDir));
+  app.get("/*splat", (req, res, next) => {
+    if (req.path.startsWith("/api")) {
+      return next();
+    }
+    res.sendFile(path.resolve(publicDir, "index.html"));
+  });
+} else {
+  logger.warn({ publicDir }, "Static files directory not found. Frontend will not be served.");
+}
 
 export default app;
 

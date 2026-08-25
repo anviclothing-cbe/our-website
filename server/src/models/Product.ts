@@ -15,6 +15,8 @@ export interface IProduct extends Document {
   featured: boolean;
   onSale: boolean;
   tags: string[];
+  collections?: string[];
+  occasions?: string[];
   createdAt: Date;
 }
 
@@ -34,11 +36,15 @@ const ProductSchema = new Schema<IProduct>(
     featured: { type: Boolean, default: false },
     onSale: { type: Boolean, default: false },
     tags: [{ type: String }],
+    collections: [{ type: String }],
+    occasions: [{ type: String }],
   },
   { timestamps: true },
 );
 
 ProductSchema.index({ category: 1 });
+ProductSchema.index({ collections: 1 });
+ProductSchema.index({ occasions: 1 });
 ProductSchema.index({ featured: 1 });
 ProductSchema.index({ onSale: 1 });
 ProductSchema.index({ slug: 1 }, { unique: true });

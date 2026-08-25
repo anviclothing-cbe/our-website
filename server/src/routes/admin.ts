@@ -5,6 +5,8 @@ import { Product } from "../models/Product.js";
 import { Category } from "../models/Category.js";
 import { Order } from "../models/Order.js";
 import { Cart } from "../models/Cart.js";
+import { Content } from "../models/Content.js";
+import { BlogPost } from "../models/BlogPost.js";
 
 const router = Router();
 
@@ -43,20 +45,54 @@ router.post("/login", (req: Request, res: Response) => {
 
 router.get("/dashboard", requireAdmin, async (req: Request, res: Response) => {
   try {
-    const [totalProducts, totalCategories, totalOrders, pendingOrders, recentOrders] =
+    const { Lead } = await import("../models/Lead.js");
+    const [totalProducts, totalCategories, totalOrders, pendingOrders, recentOrders, distinctCustomers, totalLeads, recentLeads] =
       await Promise.all([
         Product.countDocuments(),
         Category.countDocuments(),
         Order.countDocuments(),
         Order.countDocuments({ status: "pending" }),
         Order.find().sort({ createdAt: -1 }).limit(5).lean(),
+        Order.distinct("customerEmail"),
+        Lead.countDocuments(),
+        Lead.find().sort({ createdAt: -1 }).limit(5).lean()
       ]);
+    
     const revenueAgg = await Order.aggregate([
       { $match: { status: { $ne: "cancelled" } } },
-      { $group: { _id: null, total: { $sum: "$total" } } },
+      { $group: { _id: null, total: { $sum: "$total" }, count: { $sum: 1 } } },
     ]);
+    
     const totalRevenue = revenueAgg[0]?.total ?? 0;
-    res.json({ totalProducts, totalCategories, totalOrders, pendingOrders, totalRevenue, recentOrders });
+    const completedOrdersCount = revenueAgg[0]?.count ?? 0;
+    const averageOrderValue = completedOrdersCount > 0 ? Math.round(totalRevenue / completedOrdersCount) : 0;
+    const totalCustomers = distinctCustomers.length;
+
+    // Generate mock sales data for the last 6 months for chart visualization
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const currentMonth = new Date().getMonth();
+    const salesData = Array.from({ length: 6 }).map((_, i) => {
+      const monthIdx = (currentMonth - 5 + i + 12) % 12;
+      return {
+        name: months[monthIdx],
+        revenue: Math.floor(Math.random() * 50000) + 10000,
+        orders: Math.floor(Math.random() * 50) + 5
+      };
+    });
+
+    res.json({ 
+      totalProducts, 
+      totalCategories, 
+      totalOrders, 
+      pendingOrders, 
+      totalRevenue, 
+      averageOrderValue,
+      totalCustomers,
+      totalLeads,
+      recentOrders,
+      recentLeads,
+      salesData
+    });
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch dashboard" });
   }
@@ -89,7 +125,7 @@ router.get("/products", requireAdmin, async (req: Request, res: Response) => {
 router.post("/products", requireAdmin, async (req: Request, res: Response) => {
   try {
     const { name, description, price, originalPrice, discount, images, category,
-      fabric, sizes, inStock, featured, onSale, tags } = req.body;
+      fabric, sizes, inStock, featured, onSale, tags, collections, occasions } = req.body;
     if (!name || !price || !category) {
       res.status(400).json({ error: "name, price and category are required" });
       return;
@@ -105,6 +141,8 @@ router.post("/products", requireAdmin, async (req: Request, res: Response) => {
       featured: featured ?? false,
       onSale: onSale ?? false,
       tags: Array.isArray(tags) ? tags : [],
+      collections: Array.isArray(collections) ? collections : [],
+      occasions: Array.isArray(occasions) ? occasions : [],
     });
     await product.save();
     res.status(201).json(product);
@@ -117,7 +155,7 @@ router.post("/products", requireAdmin, async (req: Request, res: Response) => {
 router.put("/products/:id", requireAdmin, async (req: Request, res: Response) => {
   try {
     const { name, description, price, originalPrice, discount, images, category,
-      fabric, sizes, inStock, featured, onSale, tags } = req.body;
+      fabric, sizes, inStock, featured, onSale, tags, collections, occasions } = req.body;
     const update: Record<string, unknown> = {};
     if (name !== undefined) {
       update.name = name;
@@ -135,6 +173,8 @@ router.put("/products/:id", requireAdmin, async (req: Request, res: Response) =>
     if (featured !== undefined) update.featured = featured;
     if (onSale !== undefined) update.onSale = onSale;
     if (tags !== undefined) update.tags = Array.isArray(tags) ? tags : [];
+    if (collections !== undefined) update.collections = Array.isArray(collections) ? collections : [];
+    if (occasions !== undefined) update.occasions = Array.isArray(occasions) ? occasions : [];
     const product = await Product.findByIdAndUpdate(req.params.id, update, { new: true });
     if (!product) { res.status(404).json({ error: "Product not found" }); return; }
     res.json(product);
@@ -245,6 +285,28 @@ router.patch("/orders/:id/status", requireAdmin, async (req: Request, res: Respo
   }
 });
 
+// ─── LEADS ───────────────────────────────────────────────────────────────────
+
+router.get("/leads", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const { Lead } = await import("../models/Lead.js");
+    const { page = "1", limit = "20" } = req.query;
+    const pageNum = parseInt(page as string, 10);
+    const limitNum = parseInt(limit as string, 10);
+    
+    const total = await Lead.countDocuments();
+    const leads = await Lead.find()
+      .sort({ createdAt: -1 })
+      .skip((pageNum - 1) * limitNum)
+      .limit(limitNum)
+      .lean();
+      
+    res.json({ leads, total, page: pageNum, pages: Math.ceil(total / limitNum) });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch leads" });
+  }
+});
+
 // POST /api/admin/upload
 router.post("/upload", requireAdmin, async (req: Request, res: Response) => {
   try {
@@ -280,4 +342,107 @@ router.post("/upload", requireAdmin, async (req: Request, res: Response) => {
   }
 });
 
+
+// ─── CMS CONTENT CRUD ─────────────────────────────────────────────────────────
+
+router.get("/content/:type", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const { type } = req.params;
+    const content = await Content.findOne({ type });
+    if (!content) {
+      res.status(404).json({ error: "Content not found" });
+      return;
+    }
+    res.json(content.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch content" });
+  }
+});
+
+router.put("/content/:type", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const { type } = req.params;
+    const data = req.body;
+    
+    let content = await Content.findOne({ type });
+    if (content) {
+      content.data = data;
+      await content.save();
+    } else {
+      content = new Content({ type, data });
+      await content.save();
+    }
+    res.json(content.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to update content" });
+  }
+});
+
+// ─── BLOG CRUD ───────────────────────────────────────────────────────────────
+
+router.get("/blog", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const posts = await BlogPost.find().sort({ createdAt: -1 }).lean();
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch blog posts" });
+  }
+});
+
+router.post("/blog", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const { title, content, excerpt, category, imageUrl, readTime, isPublished } = req.body;
+    if (!title || !content) {
+      res.status(400).json({ error: "Title and content are required" });
+      return;
+    }
+    
+    let slug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+    // Check if slug exists
+    const existing = await BlogPost.findOne({ slug });
+    if (existing) {
+      slug += "-" + Date.now();
+    }
+
+    const post = new BlogPost({
+      title, slug, content, excerpt, category, imageUrl, readTime, isPublished
+    });
+    await post.save();
+    res.status(201).json(post);
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message ?? "Failed to create blog post" });
+  }
+});
+
+router.put("/blog/:id", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const update = req.body;
+    // Don't allow changing slug directly here for simplicity, or handle if title changes
+    if (update.title) {
+       // Optional: update slug if title changes
+    }
+    
+    const post = await BlogPost.findByIdAndUpdate(req.params.id, update, { new: true });
+    if (!post) {
+      res.status(404).json({ error: "Blog post not found" });
+      return;
+    }
+    res.json(post);
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message ?? "Failed to update blog post" });
+  }
+});
+
+router.delete("/blog/:id", requireAdmin, async (req: Request, res: Response) => {
+  try {
+    const post = await BlogPost.findByIdAndDelete(req.params.id);
+    if (!post) {
+      res.status(404).json({ error: "Blog post not found" });
+      return;
+    }
+    res.json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to delete blog post" });
+  }
+});
 export default router;

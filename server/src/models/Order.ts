@@ -7,6 +7,7 @@ export interface IOrderItem {
   image: string;
   quantity: number;
   size: string;
+  color?: string;
 }
 
 export interface IOrder extends Document {
@@ -14,17 +15,14 @@ export interface IOrder extends Document {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
-  address: {
-    line1: string;
-    line2?: string;
-    city: string;
-    state: string;
-    pincode: string;
-  };
+  address: string;
   items: IOrderItem[];
   subtotal: number;
+  discount: number;
+  shipping: number;
   total: number;
-  paymentMethod: "cod" | "upi";
+  couponCode?: string;
+  paymentMethod: "cod" | "upi" | "card";
   status: "pending" | "confirmed" | "shipped" | "delivered" | "cancelled";
   notes?: string;
   sessionId: string;
@@ -38,6 +36,7 @@ const OrderItemSchema = new Schema<IOrderItem>({
   image: { type: String },
   quantity: { type: Number, required: true, min: 1 },
   size: { type: String, required: true },
+  color: { type: String },
 });
 
 const OrderSchema = new Schema<IOrder>(
@@ -46,17 +45,14 @@ const OrderSchema = new Schema<IOrder>(
     customerName: { type: String, required: true },
     customerEmail: { type: String, required: true },
     customerPhone: { type: String, required: true },
-    address: {
-      line1: { type: String, required: true },
-      line2: { type: String },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
-      pincode: { type: String, required: true },
-    },
+    address: { type: String, required: true },
     items: [OrderItemSchema],
     subtotal: { type: Number, required: true },
+    discount: { type: Number, default: 0 },
+    shipping: { type: Number, default: 0 },
     total: { type: Number, required: true },
-    paymentMethod: { type: String, enum: ["cod", "upi"], required: true },
+    couponCode: { type: String },
+    paymentMethod: { type: String, enum: ["cod", "upi", "card"], required: true },
     status: {
       type: String,
       enum: ["pending", "confirmed", "shipped", "delivered", "cancelled"],

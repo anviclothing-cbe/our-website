@@ -8,6 +8,7 @@ export interface ICartItem {
   image: string;
   quantity: number;
   size: string;
+  color?: string;
 }
 
 export interface ICart extends Document {
@@ -23,6 +24,7 @@ const CartItemSchema = new Schema<ICartItem>({
   image: { type: String, required: true },
   quantity: { type: Number, required: true, min: 1 },
   size: { type: String, required: true },
+  color: { type: String },
 });
 
 const CartSchema = new Schema<ICart>(

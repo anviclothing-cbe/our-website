@@ -1,134 +1,136 @@
-import { Heart, Sparkles, ShoppingBag, Phone, Mail, MapPin, Star, Flower2 } from "lucide-react";
-
-const G = "#cea53b"; // golden
+import { ANVI_STORY } from "@/lib/story-data"
+import { Button } from "@/components/ui/button"
+import { Link } from "wouter"
+import { routes } from "@/lib/routes"
+import { ScrollReveal } from "@/components/shared/ScrollReveal"
+import { useSEO } from "@/hooks/useSEO"
 
 export default function AboutPage() {
+  useSEO({
+    title: "About ANVI Clothing | Our Story",
+    description: "Learn about the story behind ANVI Clothing. We create beautiful, comfortable, and truly wearable fashion for women and little girls.",
+    canonical: "https://anvi.clothing/our-story"
+  });
+  
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-16">
-      {/* Header */}
-      <div className="text-center mb-14">
-        <img
-          src="/anvi_logo.png"
-          alt="Anvi Clothing"
-          className="h-28 mx-auto mb-8 object-contain transition-all duration-300 ease-in-out hover:scale-105 filter hover:drop-shadow-[0_4px_12px_rgba(206,165,59,0.15)]"
-        />
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <Flower2 size={14} style={{ color: G }} />
-          <p className="text-xs tracking-[0.35em] uppercase font-semibold" style={{ color: G }}>Our Story</p>
-          <Flower2 size={14} style={{ color: G }} />
-        </div>
-        <h1
-          className="text-4xl font-bold text-foreground mb-5"
-          style={{ fontFamily: "'Cormorant Garamond', serif" }}
-        >
-          ANVI – With Love
-        </h1>
-        <p className="text-muted-foreground text-lg leading-relaxed max-w-2xl mx-auto">
-          Bringing together collections that feel beautiful, comfortable, and truly wearable — for everyday women and little girls.
-        </p>
-      </div>
-
-      {/* Story card */}
-      <div
-        className="rounded-2xl p-8 sm:p-10 mb-12 relative overflow-hidden"
-        style={{
-          background: "linear-gradient(135deg, #fdf8ef 0%, #fef9ec 100%)",
-          border: "1px solid rgba(206,165,59,0.2)",
-          boxShadow: "0 4px 30px rgba(206,165,59,0.08)",
-        }}
-      >
-        <div
-          className="absolute top-0 right-0 w-48 h-48 rounded-full blur-3xl opacity-20"
-          style={{ background: G, transform: "translate(30%, -30%)" }}
-        />
-        <div className="relative space-y-4">
-          <p className="text-base text-foreground/80 leading-relaxed flex items-start gap-2">
-            <Heart size={16} style={{ color: G }} fill={G} className="flex-shrink-0 mt-0.5" />
-            ANVI was created with a simple thought — to bring together collections that feel beautiful, comfortable, and truly wearable for everyday women and little girls.
-          </p>
-          <p className="text-base text-foreground/80 leading-relaxed">
-            What started as a small dream and a carefully curated online journey is now growing into something even more special. Every piece at ANVI is personally handpicked with love, keeping <strong className="text-foreground">quality, elegance, comfort, and affordability</strong> in mind.
-          </p>
-          <p className="text-base text-foreground/80 leading-relaxed flex items-start gap-2">
-            <Sparkles size={16} style={{ color: G }} className="flex-shrink-0 mt-0.5" />
-            We believe fashion is not just about trends — it's about finding outfits that make you feel <strong className="text-foreground">confident, graceful, and happy</strong> every time you wear them.
-          </p>
-          <p className="text-base text-foreground/80 leading-relaxed">
-            From timeless sarees to charming kidswear, ANVI is built to be a space where every collection feels like a favourite waiting to enter your wardrobe.
-          </p>
-          <p className="text-base text-foreground/80 leading-relaxed flex items-start gap-2">
-            <ShoppingBag size={16} style={{ color: G }} className="flex-shrink-0 mt-0.5" />
-            And now… we're excited to bring the real ANVI experience closer to you with our <strong className="text-foreground">offline store</strong>.
-          </p>
-          <p className="text-base text-foreground/80 leading-relaxed flex items-start gap-2">
-            <Heart size={16} style={{ color: G }} fill={G} className="flex-shrink-0 mt-0.5" />
-            Thank you for growing with us, supporting our small dream, and being a part of this journey.
-          </p>
-          <p className="text-base font-semibold" style={{ color: G }}>
-            With love,<br />
-            Nivetha | ANVI
-          </p>
-        </div>
-      </div>
-
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-12 text-center">
-        {[
-          { label: "Happy Customers", value: "1000+", icon: <Heart size={18} fill={G} style={{ color: G }} /> },
-          { label: "Collections", value: "8+", icon: <Star size={18} fill={G} style={{ color: G }} /> },
-          { label: "Quality Promise", value: "100%", icon: <Sparkles size={18} style={{ color: G }} /> },
-          { label: "Since", value: "2026", icon: <Flower2 size={18} style={{ color: G }} /> },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-xl p-5 transition-all duration-300 hover:-translate-y-1"
-            style={{
-              background: "linear-gradient(135deg, #fdf8ef, #fff)",
-              border: "1px solid rgba(206,165,59,0.18)",
-              boxShadow: "0 2px 12px rgba(206,165,59,0.06)",
-            }}
-          >
-            <div className="flex justify-center mb-2">{stat.icon}</div>
-            <p
-              className="text-2xl font-bold mb-1"
-              style={{ color: G, fontFamily: "'Cormorant Garamond', serif" }}
-            >
-              {stat.value}
+    <div className="w-full flex flex-col items-center bg-surface selection:bg-button-primary selection:text-text-on-dark pb-0">
+      
+      {/* 1. Hero Section - Editorial Split */}
+      <section className="w-full relative min-h-[90vh] flex flex-col lg:flex-row items-stretch">
+        <div className="w-full lg:w-5/12 px-6 sm:px-12 lg:pl-24 xl:pl-32 flex flex-col justify-center z-10 pt-16 pb-16 lg:py-24">
+          <ScrollReveal>
+            <h1 className="text-display text-text-primary mb-8 leading-[1.1] relative">
+              <span className="block">{ANVI_STORY.hero.heading.split(' ')[0]}</span>
+              <span className="block text-brand-primary">{ANVI_STORY.hero.heading.split(' ').slice(1, 3).join(' ')}</span>
+              <span className="block">{ANVI_STORY.hero.heading.split(' ').slice(3).join(' ')}</span>
+            </h1>
+            <div className="h-[1px] w-16 bg-brand-gold mb-8"></div>
+            <p className="text-xl md:text-2xl font-light text-text-muted max-w-md leading-relaxed">
+              {ANVI_STORY.hero.subheading}
             </p>
-            <p className="text-xs text-muted-foreground">{stat.label}</p>
-          </div>
-        ))}
-      </div>
+          </ScrollReveal>
+        </div>
+        
+        <div className="w-full lg:w-7/12 min-h-[50vh] lg:min-h-[90vh] relative">
+          <ScrollReveal delay={0.2} className="w-full h-full absolute inset-0 overflow-hidden">
+            <div className="absolute inset-0 bg-border-subtle z-10 mix-blend-multiply pointer-events-none"></div>
+            <img 
+              src={ANVI_STORY.hero.image} 
+              alt="ANVI Curated Collection" 
+              loading="lazy"
+              className="w-full h-full object-cover origin-center hover:scale-105 transition-transform duration-[2s] ease-out"
+            />
+          </ScrollReveal>
+        </div>
+      </section>
 
-      {/* Offline store promo */}
-      <div
-        className="rounded-2xl p-8 text-center"
-        style={{
-          background: "linear-gradient(135deg, #1a1209 0%, #2d1f07 100%)",
-          boxShadow: "0 8px 30px rgba(206,165,59,0.15)",
-        }}
-      >
-        <div className="flex justify-center mb-3">
-          <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ background: "rgba(206,165,59,0.15)" }}>
-            <ShoppingBag size={24} style={{ color: G }} />
+      {/* 2. Founder Story - Magazine Overlap */}
+      <section className="w-full py-24 md:py-40 bg-surface relative overflow-hidden">
+        {/* Decorative background element */}
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-surface-light rounded-full blur-3xl opacity-50 pointer-events-none"></div>
+        
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative flex flex-col lg:flex-row items-center">
+            
+            <ScrollReveal className="w-full lg:w-7/12 aspect-[4/5] lg:aspect-square overflow-hidden z-10 shadow-2xl">
+              <img 
+                src={ANVI_STORY.founder.image} 
+                alt={ANVI_STORY.founder.name} 
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
+            </ScrollReveal>
+
+            <ScrollReveal delay={0.3} className="w-full lg:w-6/12 bg-surface border border-surface-accent/20 p-10 md:p-16 shadow-xl z-20 mt-[-10%] lg:mt-0 lg:ml-[-10%] relative">
+              <div className="absolute top-0 left-0 w-2 h-full bg-brand-primary"></div>
+              
+              <h3 className="text-xs tracking-[0.2em] text-brand-gold uppercase mb-4 font-semibold">
+                The Founder
+              </h3>
+              <h2 className="font-serif text-4xl md:text-5xl text-text-primary mb-8 leading-tight">
+                {ANVI_STORY.founder.heading}
+              </h2>
+              
+              <div className="space-y-6">
+                {ANVI_STORY.founder.story.map((paragraph, index) => (
+                  <p key={index} className="text-text-muted text-lg leading-relaxed font-light">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </ScrollReveal>
           </div>
         </div>
-        <h2
-          className="text-2xl font-bold text-white mb-3"
-          style={{ fontFamily: "'Cormorant Garamond', serif" }}
-        >
-          Visit Our Store
-        </h2>
-        <p className="text-white/70 text-sm leading-relaxed max-w-lg mx-auto mb-3">
-          143, Raju Naidu Street, Sivananda Colony - 641012
-        </p>
-        <p className="text-sm flex items-center justify-center gap-1.5 mb-1" style={{ color: G }}>
-          <Phone size={13} /> 9442282319 / 8072454583
-        </p>
-        <p className="text-sm flex items-center justify-center gap-1.5" style={{ color: G }}>
-          <Mail size={13} /> anviclothing2026@gmail.com
-        </p>
-      </div>
+      </section>
+
+      {/* 4. Origin & Philosophy - Flowing Editorial Sequence */}
+      <section className="w-full py-24 md:py-32 bg-surface-light">
+        <div className="max-w-4xl mx-auto px-6 mb-24 text-center">
+          <ScrollReveal>
+            <h2 className="font-serif text-4xl md:text-5xl text-text-primary mb-10">
+              {ANVI_STORY.origin.heading}
+            </h2>
+            <div className="space-y-8">
+              {ANVI_STORY.origin.story.map((paragraph, index) => (
+                <p key={index} className="text-text-muted text-xl leading-relaxed font-light">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          </ScrollReveal>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 pt-16 border-t border-border-subtle">
+          <ScrollReveal className="mb-20 lg:text-center">
+            <h2 className="font-serif text-4xl md:text-5xl text-text-primary mb-6">
+              {ANVI_STORY.philosophy.heading}
+            </h2>
+            <p className="text-xl text-text-muted font-light max-w-2xl lg:mx-auto">
+              {ANVI_STORY.philosophy.intro}
+            </p>
+          </ScrollReveal>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+            {ANVI_STORY.philosophy.pillars.map((pillar, index) => (
+              <ScrollReveal 
+                key={pillar.id} 
+                delay={0.1 * index} 
+                className="flex flex-col relative pt-8 group"
+              >
+                <div className="absolute top-0 left-0 w-8 h-[1px] bg-brand-gold transition-all duration-500 group-hover:w-full"></div>
+                <span className="text-brand-gold/50 font-serif text-5xl mb-4 font-light">0{index + 1}</span>
+                <h3 className="font-serif text-2xl text-text-primary mb-3">
+                  {pillar.title}
+                </h3>
+                <p className="text-text-muted leading-relaxed font-light text-base">
+                  {pillar.description}
+                </p>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+      
     </div>
-  );
+  )
 }

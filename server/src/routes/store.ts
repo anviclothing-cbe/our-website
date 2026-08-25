@@ -2,6 +2,8 @@ import { Router, type Request, type Response } from "express";
 import nodemailer from "nodemailer";
 import { Product } from "../models/Product.js";
 import { Category } from "../models/Category.js";
+import { Content } from "../models/Content.js";
+import { BlogPost } from "../models/BlogPost.js";
 
 const router = Router();
 
@@ -90,6 +92,69 @@ Message: ${message}`,
   } catch (err) {
     req.log.error({ err }, "Error sending email inquiry");
     res.status(500).json({ error: "Failed to send inquiry email" });
+  }
+});
+
+// POST /api/store/leads
+router.post("/leads", async (req: Request, res: Response) => {
+  try {
+    const { name, phone, email, source } = req.body;
+    if (!name || !email || !phone) {
+      res.status(400).json({ error: "Name, phone, and email are required" });
+      return;
+    }
+    
+    // Check if lead already exists
+    const { Lead } = await import("../models/Lead.js");
+    let lead = await Lead.findOne({ email });
+    if (!lead) {
+      lead = new Lead({ name, phone, email, source: source || "Popup" });
+      await lead.save();
+    }
+    
+    res.status(200).json({ success: true, lead });
+  } catch (err) {
+    req.log.error({ err }, "Error saving lead");
+    res.status(500).json({ error: "Failed to save lead" });
+  }
+});
+
+// GET /api/store/content/:type
+router.get("/content/:type", async (req: Request, res: Response) => {
+  try {
+    const { type } = req.params;
+    const content = await Content.findOne({ type });
+    if (!content) {
+      res.status(404).json({ error: "Content not found" });
+      return;
+    }
+    res.json(content.data);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch content" });
+  }
+});
+
+// GET /api/store/blog
+router.get("/blog", async (req: Request, res: Response) => {
+  try {
+    const posts = await BlogPost.find({ isPublished: true }).sort({ publishedAt: -1 }).lean();
+    res.json(posts);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch blog posts" });
+  }
+});
+
+// GET /api/store/blog/:slug
+router.get("/blog/:slug", async (req: Request, res: Response) => {
+  try {
+    const post = await BlogPost.findOne({ slug: req.params.slug, isPublished: true }).lean();
+    if (!post) {
+      res.status(404).json({ error: "Blog post not found" });
+      return;
+    }
+    res.json(post);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch blog post" });
   }
 });
 

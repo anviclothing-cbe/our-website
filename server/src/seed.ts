@@ -1,31 +1,14 @@
 import { Product } from "./models/Product.js";
 import { Category } from "./models/Category.js";
+import { Coupon } from "./models/Coupon.js";
 import { logger } from "./lib/logger.js";
 
 const categories = [
   {
-    name: "Salwar Sets",
-    slug: "salwar-sets",
-    image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&auto=format&fit=crop&q=80",
-    description: "Beautiful salwar sets for everyday elegance",
-  },
-  {
-    name: "Co-ord Sets",
-    slug: "co-ord-sets",
-    image: "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/0P4A9437_ff9cc9ad-2540-4cb1-8dd3-f996737ab067.jpg",
-    description: "Matching co-ordinated sets for a complete look",
-  },
-  {
-    name: "Kurtas",
-    slug: "kurtas",
-    image: "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/3_dfadca2e-e763-4afd-81ff-424018f34a74_2.webp",
-    description: "Elegant kurtas in comfortable fabrics",
-  },
-  {
-    name: "Maternity Wear",
-    slug: "maternity-wear",
+    name: "Women",
+    slug: "women",
     image: "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80",
-    description: "Comfortable and stylish maternity wear for every stage",
+    description: "Shop our exclusive women's collection",
   },
   {
     name: "Sarees",
@@ -34,22 +17,28 @@ const categories = [
     description: "Timeless sarees for every occasion",
   },
   {
-    name: "Kids",
-    slug: "kids",
+    name: "Salwars",
+    slug: "salwars",
+    image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&auto=format&fit=crop&q=80",
+    description: "Beautiful salwar sets for everyday elegance",
+  },
+  {
+    name: "Co-ord Sets",
+    slug: "coord-sets",
+    image: "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/0P4A9437_ff9cc9ad-2540-4cb1-8dd3-f996737ab067.jpg",
+    description: "Matching co-ordinated sets for a complete look",
+  },
+  {
+    name: "3-Piece Sets",
+    slug: "3-piece-sets",
+    image: "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/3_dfadca2e-e763-4afd-81ff-424018f34a74_2.webp",
+    description: "Elegant 3-piece sets in comfortable fabrics",
+  },
+  {
+    name: "Kidswear",
+    slug: "kidswear",
     image: "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400&auto=format&fit=crop&q=80",
     description: "Charming kidswear for your little ones",
-  },
-  {
-    name: "Night Wear",
-    slug: "night-wear",
-    image: "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&auto=format&fit=crop&q=80",
-    description: "Cozy and comfortable night wear",
-  },
-  {
-    name: "Bottoms",
-    slug: "bottoms",
-    image: "https://images.unsplash.com/photo-1583396618422-70d0b73eac01?w=400&auto=format&fit=crop&q=80",
-    description: "Versatile bottoms to pair with any top",
   },
 ];
 
@@ -62,7 +51,7 @@ const products = [
     images: [
       "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/IMG_9196.webp",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -80,7 +69,7 @@ const products = [
     images: [
       "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/LTS9214_1.webp",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -96,7 +85,7 @@ const products = [
     images: [
       "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/1_f999a9fc-6bf5-4f62-893c-3f1f341d9e0e.webp",
     ],
-    category: "kurta-pant-sets",
+    category: "salwars",
     fabric: "Modal Silk",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -114,7 +103,7 @@ const products = [
       "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/DSCF5738.jpg",
       "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/DSCF5791.jpg",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL", "XXL"],
     inStock: true,
@@ -130,7 +119,7 @@ const products = [
     images: [
       "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/23-HWC03157.webp",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -146,7 +135,7 @@ const products = [
     images: [
       "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/0P4A7931.webp",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -162,7 +151,7 @@ const products = [
     images: [
       "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/DSCF8235_ca376798-f45b-4fee-a781-91c7171311b0.webp",
     ],
-    category: "dupattas",
+    category: "women",
     fabric: "Chanderi Silk",
     sizes: ["Free Size"],
     inStock: true,
@@ -178,7 +167,7 @@ const products = [
     images: [
       "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/DSCF8708.webp",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -194,7 +183,7 @@ const products = [
     images: [
       "https://entwinestore.com/cdn/shop/files/rn-image_picker_lib_temp_02460eaa-46ce-4d20-a7ee-f0bd52feb982.jpg",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -213,7 +202,7 @@ const products = [
       "https://entwinestore.com/cdn/shop/files/IMG-5943.jpg",
       "https://entwinestore.com/cdn/shop/files/IMG-5956.jpg",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Modal Silk",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -229,7 +218,7 @@ const products = [
     images: [
       "https://entwinestore.com/cdn/shop/files/9A355272-C22B-4CFC-8CB8-A0DC127BF667.jpg",
     ],
-    category: "kurtas",
+    category: "women",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -246,7 +235,7 @@ const products = [
       "https://entwinestore.com/cdn/shop/files/DSC00563.jpg",
       "https://entwinestore.com/cdn/shop/files/DSC00579.jpg",
     ],
-    category: "kurta-pant-sets",
+    category: "salwars",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -263,7 +252,7 @@ const products = [
       "https://entwinestore.com/cdn/shop/files/DSCF5660.jpg",
       "https://entwinestore.com/cdn/shop/files/DSCF5681.jpg",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -282,7 +271,7 @@ const products = [
       "https://entwinestore.com/cdn/shop/files/IMG-8908.jpg",
       "https://entwinestore.com/cdn/shop/files/IMG-8909.jpg",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Ikat Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -298,7 +287,7 @@ const products = [
     images: [
       "https://entwinestore.com/cdn/shop/files/1E9E9C79-4F87-4F9D-9344-16D50AE1990D.jpg",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -314,7 +303,7 @@ const products = [
     images: [
       "https://entwinestore.com/cdn/shop/files/2448DAA1-919C-4FE3-8AD7-DAD6DDE11898.jpg",
     ],
-    category: "co-ord-sets",
+    category: "coord-sets",
     fabric: "Cotton",
     sizes: ["XS", "S", "M", "L", "XL"],
     inStock: true,
@@ -322,19 +311,152 @@ const products = [
     onSale: false,
     tags: ["bagru", "indigo", "kalidaar", "flared"],
   },
+  {
+    name: "Classic Silk Saree",
+    slug: "classic-silk-saree",
+    description: "Elegant silk saree with intricate zari work.",
+    price: 12500,
+    images: [
+      "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=400&auto=format&fit=crop&q=80",
+    ],
+    category: "sarees",
+    fabric: "Silk",
+    sizes: ["Free Size"],
+    inStock: true,
+    featured: true,
+    onSale: false,
+    tags: ["saree", "silk", "festive"],
+  },
+  {
+    name: "Floral Salwar Suit",
+    slug: "floral-salwar-suit",
+    description: "Comfortable cotton salwar suit with floral prints.",
+    price: 3200,
+    images: [
+      "https://cdn.shopify.com/s/files/1/0397/7681/3213/files/3_dfadca2e-e763-4afd-81ff-424018f34a74_2.webp",
+    ],
+    category: "salwars",
+    fabric: "Cotton",
+    sizes: ["S", "M", "L", "XL"],
+    inStock: true,
+    featured: false,
+    onSale: true,
+    tags: ["salwar", "cotton", "casual"],
+  },
+  {
+    name: "Comfort Maternity Dress",
+    slug: "comfort-maternity-dress",
+    description: "Breathable and comfortable maternity dress.",
+    price: 2800,
+    images: [
+      "https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=400&auto=format&fit=crop&q=80",
+    ],
+    category: "women",
+    fabric: "Cotton Blend",
+    sizes: ["M", "L", "XL"],
+    inStock: true,
+    featured: false,
+    onSale: false,
+    tags: ["maternity", "comfort"],
+  },
+  {
+    name: "Kids Festive Lehenga",
+    slug: "kids-festive-lehenga",
+    description: "Bright and cheerful lehenga for kids.",
+    price: 4500,
+    images: [
+      "https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=400&auto=format&fit=crop&q=80",
+    ],
+    category: "kidswear",
+    fabric: "Silk Blend",
+    sizes: ["4-5Y", "6-7Y", "8-9Y"],
+    inStock: true,
+    featured: true,
+    onSale: false,
+    tags: ["kidswear", "lehenga", "festive"],
+  },
+  {
+    name: "Cotton Nightsuit",
+    slug: "cotton-nightsuit",
+    description: "Soft cotton nightsuit for a comfortable sleep.",
+    price: 1500,
+    images: [
+      "https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?w=400&auto=format&fit=crop&q=80",
+    ],
+    category: "women",
+    fabric: "Cotton",
+    sizes: ["S", "M", "L", "XL"],
+    inStock: true,
+    featured: false,
+    onSale: false,
+    tags: ["nightwear", "cotton"],
+  },
+  {
+    name: "Classic Trousers",
+    slug: "classic-trousers",
+    description: "Versatile trousers that pair with any top.",
+    price: 2100,
+    images: [
+      "https://images.unsplash.com/photo-1583396618422-70d0b73eac01?w=400&auto=format&fit=crop&q=80",
+    ],
+    category: "women",
+    fabric: "Cotton Blend",
+    sizes: ["28", "30", "32", "34"],
+    inStock: true,
+    featured: false,
+    onSale: false,
+    tags: ["trousers", "women"],
+  }
 ];
 
 export async function seedDatabase(): Promise<void> {
-  const categoryCount = await Category.countDocuments();
-  const productCount = await Product.countDocuments();
+  // Always clear and re-seed in dev environment
+  await Category.deleteMany({});
+  await Product.deleteMany({});
+  await Coupon.deleteMany({});
 
-  if (categoryCount === 0) {
-    await Category.insertMany(categories);
-    logger.info(`Seeded ${categories.length} categories`);
-  }
+  await Category.insertMany(categories);
+  logger.info(`Seeded ${categories.length} categories`);
 
-  if (productCount === 0) {
-    await Product.insertMany(products);
-    logger.info(`Seeded ${products.length} products`);
-  }
+  await Product.insertMany(products);
+  logger.info(`Seeded ${products.length} products`);
+
+  const coupons = [
+    {
+      code: "WELCOME10",
+      discountType: "percentage",
+      discountValue: 10,
+      isActive: true,
+    },
+    {
+      code: "FESTIVE20",
+      discountType: "percentage",
+      discountValue: 20,
+      isActive: true,
+    },
+    {
+      code: "MIN2000",
+      discountType: "fixed",
+      discountValue: 500,
+      minimumOrderValue: 2000,
+      isActive: true,
+    },
+    {
+      code: "SAREES50",
+      discountType: "percentage",
+      discountValue: 50,
+      validCategories: ["sarees"],
+      isActive: true,
+    },
+    {
+      code: "EXPIRED",
+      discountType: "fixed",
+      discountValue: 100,
+      expiryDate: new Date("2020-01-01"),
+      isActive: true,
+    }
+  ];
+
+  await Coupon.insertMany(coupons);
+  logger.info(`Seeded ${coupons.length} coupons`);
 }
